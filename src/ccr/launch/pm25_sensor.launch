@@ -1,0 +1,7 @@
+<launch>
+  <!-- Air Condition -->
+  <node pkg="ccr" type="AirConditionPublisher.py" name="air_condition_node" output="screen">
+    <param name="topic_name" value="mobile_base/event/air_condition"/>
+    <param name="socket_name" value="/home/ubuntu/pm25_sensor.sock"/>
+  </node>
+</launch>

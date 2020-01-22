@@ -1,0 +1,9 @@
+<launch>
+
+  <!-- Move base -->
+  <arg name="custom_param_file" default="$(find navi_param)/move_base/param/dummy.yaml"/>
+  <include file="$(find navi_param)/move_base/includes/move_base.launch.xml">
+    <arg name="custom_param_file" value="$(arg custom_param_file)"/>
+  </include>
+
+</launch>

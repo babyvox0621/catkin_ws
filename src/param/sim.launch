@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- Standardized by lhan@wizrobo.com @2016-01-02 -->
+<launch>
+ 
+  <!-- Start Lidar -->
+  <!--<include file="./lg_lidar/laser.launch" />-->
+
+  <!-- Start ccrdriver -->
+  <include file="$(find ccr_simulator)/launch/3x6_middle.launch" />
+
+  <!-- velocity_smoother -->
+  <include file="$(find navi_param)/yocs_velocity_smoother/standalone.launch"/>
+
+  <!-- Start TF publisher -->
+<!--  <include file="$(find navi_param)/lidar/laser.launch" />-->
+  <include file="$(find navi_param)/lg_lidar/tf_laser.launch" />
+
+  <!-- Map server -->
+  <include file="$(find navi_param)/map_server/map_server.launch" />
+
+  <!-- AMCL -->
+  <include file="$(find navi_param)/amcl/amcl.launch" />
+
+  <!-- Move base -->
+  <include file="$(find navi_param)/move_base/move_base.launch" />
+
+</launch>

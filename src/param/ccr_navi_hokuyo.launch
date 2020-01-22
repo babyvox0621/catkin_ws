@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- Standardized by lhan@wizrobo.com @2016-01-02 -->
+<launch>
+
+  <!-- Start Lidar -->
+  <include file="$(find navi_param)/lidar/hokuyo_laser.launch" />
+
+  <!-- velocity_smoother -->
+  <include file="$(find navi_param)/yocs_velocity_smoother/standalone.launch"/>
+
+  <!-- Start TF publisher -->
+  <include file="$(find navi_param)/lidar/laser_imu.launch" />
+
+  <!-- Map server -->
+  <include file="$(find navi_param)/map_server/map_server.launch" />
+
+  <!-- AMCL -->
+  <include file="$(find navi_param)/amcl/amcl.launch" />
+
+  <!-- Move base -->
+  <include file="$(find navi_param)/move_base/move_base.launch" />
+
+  <!-- rtimulib -->
+  <include file="$(find navi_param)/rtimulib_ros/rtimulib_ros.launch" />
+
+  <!-- robot_pose_ekf -->
+  <include file="$(find navi_param)/robot_pose_ekf/robot_pose_ekf.launch" />
+
+</launch>

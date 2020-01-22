@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<launch>
+
+
+  <node name="map_server1" pkg="map_server" type="map_server" args="$(find navi_param)/map/default.yaml"/>
+<!--
+  <node name="map_server1" pkg="map_server" type="map_server" args="/home/ubuntu/catkin_ws/src/param/map/map_3x6.yaml"/>
+  <node name="map_server1" pkg="map_server" type="map_server" args="/home/ubuntu/catkin_ws/src/param/map/map_2F.yaml"/>
+  <node name="map_server1" pkg="map_server" type="map_server" args="/home/ubuntu/catkin_ws/src/param/map/maildemo/mail1f.yaml"/>
+  <node name="map_server1" pkg="map_server" type="map_server" args="/home/ubuntu/catkin_ws/src/param/map/maildemo/mail2f.yaml"/>
+-->
+
+</launch>

@@ -1,0 +1,27 @@
+ACTION=="add",\
+    SUBSYSTEM=="usb",\
+    ATTR{idVendor}=="046d", ATTR{idProduct}=="c21d",\
+    RUN+="/home/ubuntu/catkin_ws/src/ccr/launch/joy_F310.sh start"
+ACTION=="remove",\
+    SUBSYSTEM=="usb",\
+    ENV{ID_VENDOR_ID}=="046d", ENV{ID_MODEL_ID}=="c21d",\
+    RUN+="/home/ubuntu/catkin_ws/src/ccr/launch/joy_F310.sh stop"
+
+ACTION=="add",\
+    SUBSYSTEM=="usb",\
+    ENV{ID_VENDOR_ID}=="046d", ENV{ID_MODEL_ID}=="c219",\
+    RUN+="/home/ubuntu/catkin_ws/src/ccr/launch/joy_F710.sh start"
+ACTION=="remove",\
+    SUBSYSTEM=="usb",\
+    ENV{ID_VENDOR_ID}=="046d", ENV{ID_MODEL_ID}=="c219",\
+    RUN+="/home/ubuntu/catkin_ws/src/ccr/launch/joy_F710.sh stop"
+
+ACTION=="add",\
+    SUBSYSTEM=="usb",\
+    ENV{ID_VENDOR_ID}=="054c", ENV{ID_MODEL_ID}=="0268",\
+    RUN+="/home/ubuntu/catkin_ws/src/ccr/launch/joy_PSController.sh start"
+ACTION=="remove",\
+    SUBSYSTEM=="usb",\
+    ENV{ID_VENDOR_ID}=="054c", ENV{ID_MODEL_ID}=="0268",\
+    RUN+="/home/ubuntu/catkin_ws/src/ccr/launch/joy_PSController.sh stop"
+

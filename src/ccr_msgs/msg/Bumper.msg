@@ -1,0 +1,2 @@
+BooleanSensor left
+BooleanSensor right

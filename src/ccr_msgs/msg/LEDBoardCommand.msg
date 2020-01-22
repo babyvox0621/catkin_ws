@@ -1,0 +1,114 @@
+## cmd1
+uint8 DISABLE_ALL=1
+
+# degital digit LED
+uint8 DIGIT_0_ON=32         #0x20
+uint8 DIGIT_0_FLASH_SLOW=64 #0x40
+uint8 DIGIT_0_FLASH_FAST=96 #0x60
+
+uint8 DIGIT_1_ON=33         #0x21
+uint8 DIGIT_1_FLASH_SLOW=65 #0x41
+uint8 DIGIT_1_FLASH_FAST=97 #0x61
+
+uint8 DIGIT_2_ON=34         #0x22
+uint8 DIGIT_2_FLASH_SLOW=66 #0x42
+uint8 DIGIT_2_FLASH_FAST=98 #0x62
+
+uint8 DIGIT_3_ON=35         #0x23
+uint8 DIGIT_3_FLASH_SLOW=67 #0x43
+uint8 DIGIT_3_FLASH_FAST=99 #0x63
+
+uint8 DIGIT_4_ON=36         #0x24
+uint8 DIGIT_4_FLASH_SLOW=68 #0x44
+uint8 DIGIT_4_FLASH_FAST=100 #0x64
+
+uint8 DIGIT_5_ON=37          #0x25
+uint8 DIGIT_5_FLASH_SLOW=69  #0x45
+uint8 DIGIT_5_FLASH_FAST=101 #0x65
+
+uint8 DIGIT_6_ON=38          #0x26
+uint8 DIGIT_6_FLASH_SLOW=70  #0x46
+uint8 DIGIT_6_FLASH_FAST=102 #0x66
+
+uint8 DIGIT_7_ON=39          #0x27
+uint8 DIGIT_7_FLASH_SLOW=71  #0x47
+uint8 DIGIT_7_FLASH_FAST=103 #0x67
+
+uint8 DIGIT_8_ON=40          #0x28
+uint8 DIGIT_8_FLASH_SLOW=72  #0x48
+uint8 DIGIT_8_FLASH_FAST=104 #0x68
+
+uint8 DIGIT_9_ON=41          #0x29
+uint8 DIGIT_9_FLASH_SLOW=73  #0x49
+uint8 DIGIT_9_FLASH_FAST=105 #0x69
+
+uint8 DIGIT_A_ON=42          #0x2A
+uint8 DIGIT_A_FLASH_SLOW=74  #0x4A
+uint8 DIGIT_A_FLASH_FAST=106 #0x6A
+
+uint8 DIGIT_B_ON=43          #0x2B
+uint8 DIGIT_B_FLASH_SLOW=74  #0x4B
+uint8 DIGIT_B_FLASH_FAST=105 #0x6B
+
+uint8 DIGIT_C_ON=44          #0x2C
+uint8 DIGIT_C_FLASH_SLOW=75  #0x4C
+uint8 DIGIT_C_FLASH_FAST=106 #0x6C
+
+uint8 DIGIT_D_ON=45          #0x2D
+uint8 DIGIT_D_FLASH_SLOW=76  #0x4D
+uint8 DIGIT_D_FLASH_FAST=107 #0x6D
+
+uint8 DIGIT_E_ON=46          #0x2E
+uint8 DIGIT_E_FLASH_SLOW=77  #0x4E
+uint8 DIGIT_E_FLASH_FAST=108 #0x6E
+
+uint8 DIGIT_F_ON=47          #0x2F
+uint8 DIGIT_F_FLASH_SLOW=78  #0x4F
+uint8 DIGIT_F_FLASH_FAST=109 #0x6F
+
+uint8 DIGIT_G_ON=48          #0x2G
+uint8 DIGIT_G_FLASH_SLOW=79  #0x4G
+uint8 DIGIT_G_FLASH_FAST=110 #0x6G
+
+uint8 DIGIT_H_ON=49          #0x2H
+uint8 DIGIT_H_FLASH_SLOW=80  #0x4H
+uint8 DIGIT_H_FLASH_FAST=111 #0x6H
+
+## cmd2
+# color LED
+uint8 COLOR_GREEN_ON=4           #0x4
+uint8 COLOR_GREEN_FLASH_SLOW=64  #0x40
+uint8 COLOR_GREEN_FLASH_FAST=8   #0x8
+uint8 COLOR_RED_ON=1             #0x1
+uint8 COLOR_RED_FLASH_FAST=2     #0x2
+uint8 COLOR_REPORT_ON=16         #0x10
+uint8 COLOR_REPORT_FLASH=32         #0x20
+
+## cmd3
+# Spot LED
+uint8 SPORT_ON=16         #0x10
+uint8 SPORT_FLASH=32         #0x20
+
+uint8 CAREFUL_ON=4         #0x4
+uint8 CAREFUL_FLASH=8         #0x8
+
+uint8 AUTO_ON=1         #0x1
+uint8 AUTO_FLASH=2         #0x2
+
+## cmd4
+# other LEDs
+uint8 RESERVE_ON=1         #0x1
+uint8 RESERVE_FLASH=2         #0x2
+
+uint8 BATTERY_ON=4         #0x4
+uint8 BATTERY_FLASH_FAST=8         #0x8
+uint8 BATTERY_FLASH_SLOW=64         #0x40
+
+uint8 DUST_ON=16         #0x10
+uint8 DUST_FLASH=32         #0x20
+
+Header header
+uint8 cmd1
+uint8 cmd2
+uint8 cmd3
+uint8 cmd4

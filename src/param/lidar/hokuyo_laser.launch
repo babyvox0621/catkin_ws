@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <arg name="frame_id" default="/laser" />
+
+  <node name="urg_node" pkg="urg_node" type="urg_node" respawn="false" output="screen">
+	<param name="ip_address" value="192.168.0.10"/>
+<!--
+	<param name="angle_min" value="-1.52"/>
+	<param name="angle_max" value="1.52"/>
+-->
+	<param name="angle_min" value="-2.00"/>
+	<param name="angle_max" value="2.00"/>
+        <param name="frame_id" value="$(arg frame_id)" />
+  </node>
+
+</launch>

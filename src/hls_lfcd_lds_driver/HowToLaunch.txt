@@ -1,0 +1,2 @@
+# 起動方法
+roslaunch hls_lfcd_lds_driver hlds_laser.launch

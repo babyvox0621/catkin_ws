@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="imu_topic_name" default="imu"/>
+
+    <include file="$(find rtimulib_ros)/launch/rtimulib_ros.launch">
+        <arg name="imu_topic_name" value="$(arg imu_topic_name)"/>
+    </include>
+
+    <node name="static_transform_publisher_imu" pkg="tf" type="static_transform_publisher" args="-0.15 -0.05 0 0 0 0 /base_footprint /imu_link 100"/>
+
+
+</launch>

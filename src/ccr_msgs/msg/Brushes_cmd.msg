@@ -1,0 +1,2 @@
+bool brush
+bool vacuum

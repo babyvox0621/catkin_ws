@@ -1,0 +1,7 @@
+<launch>
+  <!-- Outer Environment -->
+  <node pkg="ccr" type="OuterEnvPublisher.py" name="outer_condition_node" output="screen">
+    <param name="topic_name" value="mobile_base/event/outer_environment"/>
+    <param name="socket_name" value="/home/ubuntu/out_env_sensor.sock"/>
+  </node>
+</launch>

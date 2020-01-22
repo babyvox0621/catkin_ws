@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="imu_topic_name" default="imu_data"/>
+
+    <node pkg="rtimulib_ros" type="rtimulib_ros" name="rtimulib_node" output="screen">
+        <param name="calibration_file_path" value="$(find rtimulib_ros)/config"/>
+        <param name="calibration_file_name" value="RTIMULib" />
+        <param name="frame_id" value="imu_link"/>
+        <param name="topic_name" value="$(arg imu_topic_name)"/>
+        <param name="update_rate" value="100"/>
+	<param name="enable_gyro" value="true"/>
+	<param name="enable_accel" value="false"/>
+	<param name="enable_compass" value="false"/>
+	<param name="k_x" value="0.0"/>
+	<param name="k_y" value="0.0"/>
+	<param name="k_z" value="1.0"/>
+    </node>
+</launch>

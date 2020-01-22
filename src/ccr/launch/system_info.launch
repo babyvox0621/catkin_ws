@@ -1,0 +1,8 @@
+<launch>
+  <!-- System Information -->
+  <node pkg="ccr" type="SystemInfoPublisher.py" name="system_info_node" output="screen">
+    <param name="topic_name" value="mobile_base/event/system_info"/>
+    <param name="socket_name" value="/home/ubuntu/system_monitor_ros.sock"/>
+  </node>
+
+</launch>

@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="id" default="0"/>
+  <arg name="base_name" default="ccr_"/>
+  <!--<arg name="port" default="/dev/ttyUSB0"/> -->
+  <arg name="port" default="/dev/ttyTHS2"/>
+  <arg name="publish_name" default="true"/>
+  <arg name="wheel_diameter" default="0.0698"/>
+  <arg name="axle_length"    default="0.250"/>
+
+  <remap from="/cmd_vel" to="/cmd_vel" />
+  <remap from="imu_data" to="imu_no_use"/>
+
+  <node name="ccrdriver" pkg="ccr" type="ccr_serial" respawn="false" output="screen">
+    <param name="id_" value="$(arg id)"/>
+    <param name="base_name_" value="$(arg base_name)"/>
+    <rosparam param="poseCovariance">[1e-2, 0,    0,    0,    0,    0,   
+                                      0,    1e-2, 0,    0,    0,    0, 
+                                      0,    0,    1, 0,    0,    0,  
+                                      0,    0,    0,    1, 0,    0, 
+                                      0,    0,    0,    0,    1, 0,   
+                                      0,    0,    0,    0,    0,    1e-1]</rosparam>
+    <rosparam param="twistCovariance">[1e-2, 0,    0,    0,    0,    0,   
+                                      0,    1, 0,    0,    0,    0, 
+                                      0,    0,    1, 0,    0,    0,  
+                                      0,    0,    0,    1, 0,    0, 
+                                      0,    0,    0,    0,    1, 0,   
+                                      0,    0,    0,    0,    0,    1e-2]</rosparam>
+
+    <param name="port_" value="$(arg port)"/>
+    <param name="publish_name_" value="$(arg publish_name)"/>
+    <param name="publishTf" value="true"/>
+    <param name="wheel_diameter" value="$(arg wheel_diameter)"/>
+    <param name="axle_length" value="$(arg axle_length)"/>
+    <param name="max_encoder_counts" value="65535"/>
+    <param name="max_cycle_encoder_counts" value="508.8"/>
+    <param name="encoder_logging_rate" value="0.1"/>
+
+    <!-- topic parameters -->
+    <param name="has_cleaning_module" value="true"/>
+    <param name="has_led_board" value="true"/>
+    <param name="has_ir_receiver" value="true"/>
+    <param name="has_opt_left" value="true"/>
+    <param name="has_opt_right" value="true"/>
+    <param name="has_us_left" value="true"/>
+    <param name="has_us_right" value="true"/>
+    <param name="has_us_front" value="false"/>
+    <param name="has_us_back" value="false"/>
+    <param name="has_slip_sensor" value="true"/>
+    <param name="has_cliff" value="true"/>
+    <param name="has_wheel_drop" value="true"/>
+    <param name="has_bumper" value="true"/>
+    <param name="has_battery_config" value="true"/>
+
+  </node>
+
+  <node name="static_transform_publisher_opt_left" pkg="tf" type="static_transform_publisher" args="0.08 0.15 0.06 1.04 0 0 /base_footprint /optical_ranging_sensor_left 1"/>
+  <node name="static_transform_publisher_opt_right" pkg="tf" type="static_transform_publisher" args="0.08 -0.15 0.06 -1.04 0 0 /base_footprint /optical_ranging_sensor_right 1"/>
+  <node name="static_transform_publisher_us_left" pkg="tf" type="static_transform_publisher" args="0.14 0.075 0.06 0 0 0 /base_footprint /ultrasonic_sensor_left 1"/>
+  <node name="static_transform_publisher_us_right" pkg="tf" type="static_transform_publisher" args="0.14 -0.075 0.06 0 0 0 /base_footprint /ultrasonic_sensor_right 1"/>
+  <!--node name="static_transform_publisher_us_front" pkg="tf" type="static_transform_publisher" args="0.25 0 0 0 0 0 /base_footprint /ultrasonic_sensor_front 1"/-->
+  <!--node name="static_transform_publisher_us_back" pkg="tf" type="static_transform_publisher" args="-0.25 0 0.08 3.14 0 0 /base_footprint /ultrasonic_sensor_back 1"/-->
+  <node pkg="ccr" type="ModeWatcher.py" name="mode_watcher_node">
+  </node>
+
+</launch>

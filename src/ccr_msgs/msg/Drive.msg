@@ -1,0 +1,9 @@
+Header header
+float32 velocity
+float32 radius
+float32 left_velocity
+float32 right_velocity
+int16 left_encoder_count
+int16 right_encoder_count
+int16 left_motor_current
+int16 right_motor_current

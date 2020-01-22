@@ -1,0 +1,20 @@
+<!--
+Provides a reasonable set of parameters for running Karto on a robot
+Assumes an 'odom_combined' frame, that provides reasonably accurate odometry
+-->
+
+<launch>
+
+  <node pkg="slam_karto" type="slam_karto" name="slam_karto" output="screen">
+    <param name="odom_frame" value="odom"/>
+    <param name="map_update_interval" value="1"/>
+    <param name="resolution" value="0.025"/>
+    <param name="base_frame" value="base_link"/>
+    <!--param name="base_frame" value="base_footprint"/-->
+  </node>
+
+  <node pkg="rviz" type="rviz" name="RvizForSlamKarto" output="screen"
+    args="-d $(find navi_param)/slam_karto/slam_karto.rviz" >
+  </node>
+
+</launch>

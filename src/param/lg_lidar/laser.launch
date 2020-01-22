@@ -1,0 +1,9 @@
+<launch>
+  <node pkg="hls_lfcd_lds_driver" type="hlds_laser_publisher" name="hlds_laser_publisher" output="screen">
+    <param name="port" value="/dev/ttyUART"/>
+    <param name="frame_id" value="laser"/>
+    <param name="data_cut" value="false"/>
+    <param name="inverted" value="false"/>
+  </node>
+  <!--node name="static_transform_publisher_lidar" pkg="tf" type="static_transform_publisher" args="-0.15 -0.05 0 0 0 0 /laser_base laser 100"/-->
+</launch>

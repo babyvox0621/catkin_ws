@@ -1,0 +1,7 @@
+<launch>
+  <!-- GPS -->
+  <node pkg="ccr" type="GpsPublisher.py" name="gps_node" output="screen">
+    <param name="topic_name" value="mobile_base/event/gps/"/>
+    <param name="socket_name" value="/home/ubuntu/gps_sensor.sock"/>
+  </node>
+</launch>

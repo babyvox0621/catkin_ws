@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- Standardized by lhan@wizrobo.com @2016-01-02 -->
+<launch>
+ 
+  <!-- Start Lidar -->
+  <!--<include file="./lg_lidar/laser.launch" />-->
+
+  <!-- Start robot. -->
+  <include file="$(find ccr_simulator)/launch/3x6_middle.launch" />
+
+  <!-- velocity_smoother -->
+  <include file="$(find navi_param)/yocs_velocity_smoother/standalone.launch"/>
+
+  <!-- Start TF publisher -->
+  <!--include file="./lg_lidar/tf_laser_imu.launch" /-->
+  <include file="$(find navi_param)/lg_lidar/tf_laser.launch" />
+
+  <!-- Map server -->
+  <!--include file="./map_server/map_server.launch" /-->
+
+  <!-- AMCL -->
+  <!--include file="./amcl/amcl.launch" /-->
+
+  <!-- Move base -->
+  <!--include file="./move_base/move_base.launch" /-->
+
+  <!-- rtimulib -->
+  <!--include file="./rtimulib_ros/rtimulib_ros2.launch" /-->
+
+  <!-- robot_pose_ekf -->
+  <!--include file="./robot_pose_ekf/forSlamKarto.launch" /-->
+
+  <!-- karto_slam -->
+  <include file="$(find navi_param)/slam_karto/karto_slam.launch"/>
+
+</launch>
