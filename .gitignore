@@ -3,3 +3,4 @@ devel/
 install/
 src/darknet_ros/
 src/ddynamic_reconfigure/
+src/rtimulib_ros/
