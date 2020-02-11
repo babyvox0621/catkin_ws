@@ -64,7 +64,7 @@ class arm_action:
         if self.grip<0:
 			grip=0
         self.arm.grip(self.grip) #1
-        print('release')
+        #print('release')
 
     def start_pos(self):
 		#catch back
@@ -77,7 +77,7 @@ class arm_action:
         if self.grip<0:
 			grip=0
         self.arm.grip(self.grip) #1
-        print('release')
+        #print('release')
 
 if __name__ == '__main__':
     try:
