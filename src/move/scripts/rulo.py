@@ -1,17 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import rospy
-import actionlib
 import move_goal
 import adjust
-#import rondom_move
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-from geometry_msgs.msg import PointStamped, Point, Pose
-from move.msg import commond, MSG
-from visualization_msgs.msg import Marker
-import tf2_ros
-import tf
+from geometry_msgs.msg import Point
+from move.msg import commond
 import numpy as np
+
 
 class Rulo:
 
@@ -22,10 +18,11 @@ class Rulo:
         self.cnt_angle = 0
         self.cnt_liner = 0
 
-        # get current position 
+        # get current position
         MC = move_goal.MoveCoordinate()
         point = Point()
-        self.point_map_0 = MC.transform_point(point, MC.get_tf('map', 'base_link'))
+        self.point_map_0 = MC.transform_point(point,
+                                              MC.get_tf('map', 'base_link'))
 
     def callback(self, msg):
         if((msg.node == 2)or(msg.node == 0)):
@@ -33,111 +30,145 @@ class Rulo:
             send.topic_id = msg.topic_id
             rospy.loginfo("%d", msg.topic_id)
 
-            if(msg.msg.id == 0): # random move
-                rospy.loginfo("Adjust without goal")
-
-                # simple version
-                Cmd = adjust.Adjust()
-                MC = move_goal.MoveCoordinate()
-                rot_amount = np.deg2rad(30) # rotation amount of random move
-                move_forward_amount = 0.3
-                Cmd.angular_speed = np.deg2rad(15)
-                Cmd.rotate(rot_amount)
+            if(msg.msg.id == 0):  # random move
+                rospy.loginfo("Move without goal")
+                Adj = adjust.Adjust()
+                Adj.angular_speed = np.deg2rad(15)
+                Adj.rotate(np.deg2rad(30))
                 self.cnt_angle += 1
-                if self.cnt_angle*rot_amount == 2*np.pi:
 
-                    #ランダムな方向設定
-                    '''
-                    angle_list = [0,45,90,135,180,225,270,315]
-                    old_direct = 0
-                    ret = 1
-
-                    while((len(angle_list)!=0)or(ret!=0)):
-                        direction = angle_list[np.random.randint(0,len(angle_list))]
-                        Cmd.rotate(np.deg2rad(direction))
-                        old_direct += direction
-                        if old_direct > 360:
-                            old_direct = old_direct - 360
-
-                        point_base = Point()
-                        point_base.x = move_forward_amount
-                        MC.dist = 0
-                        ret = MC.move_pose(MC.calcgoal(Point_base))
-                    '''
-                    point_base = Point()
-                    point_base.x = move_forward_amount
-                    MC.dist = 0
-                    ret = MC.move_pose(MC.calc_goal(point_base))
+                if(self.cnt_angle * np.deg2rad(30) == 2 * np.pi):
                     self.cnt_angle = 0
+                    angle = np.random.rand() * 2 * np.pi
+                    if(angle > np.pi):
+                        angle = angle - 2 * np.pi
+                    Adj.rotate(angle)
 
-                send.ret = 0 # succeed
+                    MC = move_goal.MoveCoordinate()
+                    point_base = Point()
+                    point_base.x = 0.3
+                    point_base.y = 0
+                    point_base.z = 0
+                    pose_base = MC.calc_goal(point_base, dist=0)
+                    pose_map = MC.transfer_pose(pose_base,
+                                                MC.get_tf('map', 'base_link'))
+                    ret = MC.move_pose(pose_map)
 
+                    print("goal@base", pose_base)
+                    print("-------------------------------------------")
+                    print("goal@map", pose_map)
+                    print("-------------------------------------------")
 
-            elif(msg.msg.id == 1): # move target
+                send.ret = 0  # succeed
 
-                rospy.loginfo("Adjust with goal %f %f %f", msg.msg.x3d, msg.msg.y3d, msg.msg.z3d)
+            elif(msg.msg.id == 1):  # move target
+
+                rospy.loginfo("Move with goal %f %f %f", msg.msg.x3d, msg.msg.y3d, msg.msg.z3d)
+
+                self.cnt_angle = 0
                 point_cam = Point()
                 point_cam.x = msg.msg.x3d
                 point_cam.y = msg.msg.y3d
                 point_cam.z = msg.msg.z3d
 
                 MC = move_goal.MoveCoordinate()
-                MC.move_obj(point_cam)
-                send.ret = 0 # succeed
+                point_base = MC.ransform_point(point_cam,
+                                               MC.get_tf('base_link', 'camera_link'))
+                pose_base = MC.calc_goal(point_base, dist=0.4)
+                pose_map = MC.transform_pose(pose_base,
+                                             MC.get_tf('map', 'base_link'))
+                MC.move_pose(pose_map)
 
-            elif(msg.msg.id == 2): # adjust
-                rospy.loginfo("position adjustment %d %d", msg.msg.x2d, msg.msg.y2d)
+                print("target@cam", point_cam)
+                print("-------------------------------------------")
+                print("target@base", point_base)
+                print("-------------------------------------------")
+                print("goal@base", pose_base)
+                print("-------------------------------------------")
+                print("goal@map", pose_map)
+                print("-------------------------------------------")
+
+                send.ret = 0  # succeed
+
+            elif(msg.msg.id == 2):  # adjust
+
+                rospy.loginfo("Adjust position")
 
                 point_cam = Point()
                 point_cam.x = msg.msg.x3d
                 point_cam.y = msg.msg.y3d
                 point_cam.z = msg.msg.z3d
 
-                Cmd = adjust.Adjust()
                 MC = move_goal.MoveCoordinate()
+                point_base = MC.transform_point(point_cam,
+                                                MC.get_tf('base_link', 'camera_link'))
+                theta = np.arctan2(point_base.x, point_base.y)
 
-                #座標変換
-                point_base = MC.transform_point(point_cam, MC.trans_cam2base)
-                angle = np.arctan2(point_base.y, point_base.x)
-                Cmd.rotate(angle) # 回転
-                if(msg.msg.key == 0):
-                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.18 # オブジェクトへの移動
-                elif(msg.msg.key ==1):
-                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.30 # 人への移動
-                Cmd.back_and_forward(distance) # 直進
-                send.ret = 0 # succeed
+                Adj = adjust.Adjust()
+                Adj.rotate(theta - np.pi/2)  # 回転
 
-            elif(msg.msg.id == 3): # move origin
-                rospy.loginfo("Adjust with goal %f %f %f", 0,0,0)
+                if(msg.msg.key == 0):  # オブジェクトへの移動
+                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.18
+                elif(msg.msg.key == 1):  # 人への移動
+                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.30
+                Adj.back_and_forward(distance)  # 直進
+
+                print("target@cam", point_cam)
+                print("-------------------------------------------")
+                print("theta :%f", np.rad2deg(theta))
+                print("-------------------------------------------")
+                print("distance :%f", distance)
+                print("-------------------------------------------")
+                send.ret = 0  # succeed
+
+            elif(msg.msg.id == 3):  # move origin
+                rospy.loginfo("Move origin")
+                MC = move_goal.MoveCoordinate()
+                # point_map.x = 0
+                # point_map.y = 0
+                # point_map.z = 0
                 point_map = self.point_map_0
-                #point_map.x = 0
-                #point_map.y = 0
-                #point_map.z = 0
-                MC = move_goal.MoveCoordinate()
-                Cmd = adjust.Adjust()
-                trans_map2base = MC.get_tf('base_link', 'map')
-                point_base = MC.transform_point(point_map, trans_map2base)
-                Cmd.rotate(point_base) # 移動方向に回転
-                MC.move_pose(point_map) # 自律移動
-                send.ret = 0 # succeed
+                point_base = MC.transform_point(point_map,
+                                                MC.get_tf('base_link', 'map'))
+                pose_base = MC.calc_goal(point_base, dist=0)
+                pose_map = MC.transform_pose(pose_base,
+                                             MC.get_tf('map', 'base_link'))
 
-            elif(msg.msg.id == 4): # turn towards object
-                
+                theta = np.arctan2(point_base.x, point_base.y)
+                Adj = adjust.Adjust()
+                Adj.rotate(theta - np.pi)  # 移動方向に回転
+                MC.move_pose(pose_map)  # 自律移動
+
+                print("goal@base ", pose_base)
+                print("-------------------------------------------")
+                print("goal@map ", pose_map)
+                print("-------------------------------------------")
+                print("theta :%f", np.rad2deg(theta))
+                print("-------------------------------------------")
+
+                send.ret = 0  # succeed
+
+            elif(msg.msg.id == 4):  # turn towards object
+                rospy.loginfo("Turn towards target")
                 point_cam = Point()
                 point_cam.x = msg.msg.x3d
                 point_cam.y = msg.msg.y3d
                 point_cam.z = msg.msg.z3d
 
-                Cmd = adjust.Adjust()
+                Adj = adjust.Adjust()
                 MC = move_goal.MoveCoordinate()
 
-                #座標変換
                 point_base = MC.transform_point(point_cam, MC.trans_cam2base)
-                angle = np.arctan2(point_base.x, point_base.y)
-                rospy.loginfo("turn %f degree", np.rad2deg(angle))
-                Cmd.rotate(angle) # 回転
+                theta = np.arctan2(point_base.x, point_base.y)
+                rospy.loginfo("turn %f degree", np.rad2deg(theta))
+                Adj.rotate(theta - np.pi)  # 回転
 
-            else: # invalid move mode
+                print("theta :%f", np.rad2deg(theta))
+                print("-------------------------------------------")
+
+                send.ret = 0
+
+            else:  # invalid move mode
                 rospy.loginfo("invalid move mode @RULO")
 
             self.pub_rulo.publish(send)
@@ -150,7 +181,5 @@ if __name__ == '__main__':
         RULO = Rulo()
         rospy.loginfo("running...")
         rospy.spin()
-    except rospy.ROSInterruptException: pass
-    
-
-
+    except rospy.ROSInterruptException:
+        pass

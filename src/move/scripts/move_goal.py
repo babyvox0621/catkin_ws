@@ -4,9 +4,7 @@
 import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-from geometry_msgs.msg import PointStamped, Point, Pose
-from move.msg import coordinate
-from std_msgs.msg import Bool
+from geometry_msgs.msg import Point, Pose
 from visualization_msgs.msg import Marker
 from actionlib_msgs.msg import GoalStatus
 import tf2_ros
@@ -35,23 +33,24 @@ class MoveCoordinate:
         self.cam_frame = 'camera_link'
         self.base_frame = 'base_link'
         self.map_frame = 'map'
-        self.trans_cam2base = self.get_tf(self.base_frame, self.cam_frame) # static tf
-        self.dist = 0.40
+        # self.trans_cam2base = self.get_tf(self.base_frame, self.cam_frame)
+        # self.dist = 0.40
 
+    """
     def move_obj(self, point_cam):
 
         # 座標変換
         trans_base2map = self.get_tf(self.map_frame, self.base_frame)
         point_base = self.transform_point(point_cam, self.trans_cam2base)
         print("point_base", point_base)
-        pose_base = self.calc_goal(point_base)
+        pose_base = self.calc_goal(point_base, )
         print("pose_base", pose_base)
         pose_map = self.transform_pose(pose_base, trans_base2map)
         print("pose_map", pose_map)
         # 移動
         ret = self.move_pose(pose_map)
         return ret
-
+    """
 
     def move_pose(self, pose_map):
         '''
@@ -59,15 +58,14 @@ class MoveCoordinate:
         Parameters
         ----------
         pose_map : geometry_msgs/Pose
-            マップ座標系のポーズ
+            map座標系のポーズ
 
         Returns
         -------
-        client.get_result : Bool
-            actionlibの実行結果
+        ret: int
+            actionlibの実行結果 0:succeed 1:failed
         '''
 
-        #goal = self.transform_pose(self.calc_goal(self.transform_point(point, trans1)), trans2)
         goal = pose_map
         goal_pose = MoveBaseGoal()
         goal_pose.target_pose.header.stamp = rospy.Time.now()
@@ -76,30 +74,30 @@ class MoveCoordinate:
 
         client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         client.wait_for_server()
-        #rospy.loginfo('connected to server')
+        # rospy.loginfo('connected to server')
         client.send_goal(goal_pose)
         rospy.loginfo('Send goal pos : [%5.3f, %5.3f, %5.3f]',
                       goal.position.x, goal.position.y, goal.position.z)
         self.set_marker(goal_pose)
         client.wait_for_result(rospy.Duration(10))
-        #rospy.loginfo(client.get_state())
-		#http://docs.ros.org/kinetic/api/actionlib_msgs/html/msg/GoalStatus.html
+        # http://docs.ros.org/kinetic/api/actionlib_msgs/html/msg/GoalStatus.html
         Status = GoalStatus()
         while(client.get_state() != Status.SUCCEEDED):
-            if ((client.get_state()!=Status.ACTIVE)or(client.get_state()!=Status.SUCCEEDED)):
-                client.wait_for_result(rospy.Duration(5)) # timeout時間を設定
-                if client.get_state()!=Status.ACTIVE:
+            if((client.get_state() != Status.ACTIVE)or
+                    (client.get_state() != Status.SUCCEEDED)):
+                client.wait_for_result(rospy.Duration(5))  # timeout時間を設定
+                if(client.get_state() != Status.ACTIVE):
                     break
             client.wait_for_result(rospy.Duration(1))
-            
-        if client.get_state() == Status.SUCCEEDED:
+
+        if(client.get_state() == Status.SUCCEEDED):
             rospy.loginfo('Succeed to Move')
             ret = 0
         else:
             client.cancel_goal()
             rospy.loginfo('Failed to Move')
             ret = 1
-  
+
         return ret
 
     def get_tf(self, after_frame, before_frame):
@@ -121,8 +119,12 @@ class MoveCoordinate:
         tfBuffer = tf2_ros.Buffer()
         listener = tf2_ros.TransformListener(tfBuffer)
         try:
-            trans = tfBuffer.lookup_transform(after_frame, before_frame, rospy.Time(0), rospy.Duration(3.0))
-        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
+            trans = tfBuffer.lookup_transform(after_frame,
+                                              before_frame,
+                                              rospy.Time(0),
+                                              rospy.Duration(3.0))
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
+                tf2_ros.ExtrapolationException) as e:
             print(e)
         else:
             return trans
@@ -149,13 +151,13 @@ class MoveCoordinate:
              0.0]
 
         q = [trans.transform.rotation.x,
-    		 trans.transform.rotation.y,
-    		 trans.transform.rotation.z,
-    		 trans.transform.rotation.w]
+             trans.transform.rotation.y,
+             trans.transform.rotation.z,
+             trans.transform.rotation.w]
 
         new_p = tf.transformations.quaternion_multiply(
-        		tf.transformations.quaternion_multiply(q, p),
-        		tf.transformations.quaternion_inverse(q))
+                tf.transformations.quaternion_multiply(q, p),
+                tf.transformations.quaternion_inverse(q))
 
         new_point = Point()
         new_point.x = new_p[0] + trans.transform.translation.x
@@ -170,7 +172,7 @@ class MoveCoordinate:
 
         Parameters
         ----------
-        point : geometry_msgs/Pose
+        pose : geometry_msgs/Pose
             変換前の姿勢
         trans : geometry_msgs/TransformStamped
             変換対象フレーム間のtransform
@@ -196,10 +198,10 @@ class MoveCoordinate:
              trans.transform.rotation.z,
              trans.transform.rotation.w]
 
-        new_ornt = tf.transformations.quaternion_multiply(q,ornt)
+        new_ornt = tf.transformations.quaternion_multiply(q, ornt)
         new_p = tf.transformations.quaternion_multiply(
-		        tf.transformations.quaternion_multiply(q, p),
-		        tf.transformations.quaternion_inverse(q))
+                tf.transformations.quaternion_multiply(q, p),
+                tf.transformations.quaternion_inverse(q))
 
         new_pose = Pose()
         new_pose.position.x = new_p[0] + trans.transform.translation.x
@@ -213,7 +215,7 @@ class MoveCoordinate:
 
         return new_pose
 
-    def calc_goal(self, point_base, obj_radius=0, phi=0):
+    def calc_goal(self, point_base, dist=0.4):  # , obj_radius=0, phi=0):
         '''
         オブジェクトの位置からゴール位置を計算する。
 
@@ -221,8 +223,6 @@ class MoveCoordinate:
         ----------
         point_base : geometry_msgs/Point
             検出したオブジェクトの座標(base_link座標系)
-        dist : float
-            オブジェクトとゴール間の距離(m)
         obj_radius : float, optional
             オブジェクトの半径(m)
         phi : float
@@ -233,15 +233,15 @@ class MoveCoordinate:
         pose : geometry_msgs/Pose
             ゴールの姿勢
         '''
-        theta = np.arctan2(point_base.y, point_base.x)  #　現在地からオブジェクトまでの角度
+        theta = np.arctan2(point_base.x, point_base.y)  # 現在地からオブジェクトまでの角度
 
         # ゴール位置の計算
         pose = Pose()
-        pose.position.x = point_base.x + obj_radius*np.cos(theta) - (self.dist + obj_radius)*np.cos(theta - phi)
-        pose.position.y = point_base.y + obj_radius*np.sin(theta) - (self.dist + obj_radius)*np.sin(theta - phi)
+        pose.position.x = point_base.x - dist * np.sin(theta)
+        pose.position.y = point_base.y - dist * np.cos(theta)
         pose.position.z = 0
 
-        q = tf.transformations.quaternion_about_axis(theta - phi, (0,0,1))
+        q = tf.transformations.quaternion_about_axis(theta - np.pi, (0, 0, 1))
 
         pose.orientation.x = q[0]
         pose.orientation.y = q[1]
@@ -249,7 +249,6 @@ class MoveCoordinate:
         pose.orientation.w = q[3]
 
         return pose
-
 
     def set_marker(self, goal_pose):
         """
@@ -292,4 +291,5 @@ if __name__ == '__main__':
     point.z = 0
     try:
         result = MC.move_goal(point)
-    except rospy.ROSInterruptException: pass
+    except rospy.ROSInterruptException:
+        pass
