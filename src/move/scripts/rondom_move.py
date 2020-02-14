@@ -9,10 +9,9 @@ import numpy as np
 class Moving:
 
 	def __init__(self):
-		self.goal_z = 0.30
 		self.pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-                self.angular_speed = np.deg2rad(15)
-                self.liner_speed = 0.05
+        self.angular_speed = np.deg2rad(30)
+        self.liner_speed = 0.05
 
 	def rotate(self,angle):
 

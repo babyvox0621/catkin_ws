@@ -13,20 +13,7 @@ import tf2_ros
 import tf
 import numpy as np
 
-'''
-def callback(self, msg):
 
-    self.is_detected = msg.detected
-    rospy.loginfo('detected :', self.is_detected)
-
-    if (self.is_detected)&(not self.is_finished):
-        rospy.loginfo('Recieved coordinate : [%5.3f, %5.3f, %5.3f]', msg.x, msg.y, msg.z)
-        rospy.loginfo('Start moving object pos...')
-        result = self.move_goal(msg)
-        if result:
-            self.is_finished = True
-            self.pub_finished.publish(True)
-'''
 class MoveCoordinate:
     """
     カメラで検出したオブジェクトの座標付近に移動する
@@ -45,61 +32,96 @@ class MoveCoordinate:
 
     def __init__(self):
 
-        self.dist = 0.4
-        self.obj_radius = 0.05
-        self.phi = 0
         self.cam_frame = 'camera_link'
+        self.base_frame = 'base_link'
+        self.map_frame = 'map'
+        self.trans_cam2base = self.get_tf(self.base_frame, self.cam_frame) # static tf
+        self.dist = 0.40
 
-    def move_goal(self, point,
-                  frame_time = 0):
+    def move_obj(self, point_cam):
+
+        # 座標変換
+        trans_base2map = self.get_tf(self.map_frame, self.base_frame)
+        point_base = self.transform_point(point_cam, self.trans_cam2base)
+        pose_map = self.transform_pose(self.calc_goal(point), self.trans_base2map)
+        # 移動
+        ret = self.move_pose(pose)
+        return ret
+
+
+    def move_pose(self, pose_map):
         '''
-        指定されたゴール地点に移動する
+        指定されたゴール姿勢に移動する
         Parameters
         ----------
-        point : geometry_msgs/Point
-            カメラ座標系のオブジェクト位置
+        pose_map : geometry_msgs/Pose
+            マップ座標系のポーズ
 
         Returns
         -------
         client.get_result : Bool
             actionlibの実行結果
         '''
-        # tfを取得
+
+        #goal = self.transform_pose(self.calc_goal(self.transform_point(point, trans1)), trans2)
+        goal = pose_map
+        goal_pose = MoveBaseGoal()
+        goal_pose.target_pose.header.stamp = rospy.Time.now()
+        goal_pose.target_pose.header.frame_id = self.map_frame
+        goal_pose.target_pose.pose = goal
+
+        client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        client.wait_for_server()
+        #rospy.loginfo('connected to server')
+        client.send_goal(goal_pose)
+        rospy.loginfo('Send goal pos : [%5.3f, %5.3f, %5.3f]',
+                      goal.position.x, goal.position.y, goal.position.z)
+        self.set_marker(goal_pose)
+        client.wait_for_result(rospy.Duration(10))
+        #rospy.loginfo(client.get_state())
+		#http://docs.ros.org/kinetic/api/actionlib_msgs/html/msg/GoalStatus.html
+        Status = GoalStatus()
+        while(client.getstate() != Status.SUCCEEDED):
+            if ((client.getstate()!=Status.ACTIVE)or(client.getstate()!=Status.SUCCEEDED)):
+                client.wait_for_result(rospy.Duration(15)) # timeout時間を設定
+                if client.getstate()!=Status.ACTIVE:
+                    break
+            client.wait_for_result(rospy.Duration(1))
+            
+        if client.get_state() == Status.SUCCEEDED:
+            rospy.loginfo('Succeed to Move')
+            ret = 0
+        else:
+            client.cancel_goal()
+            rospy.loginfo('Failed to Move')
+            ret = 1
+  
+        return ret
+
+    def get_tf(self, after_frame, before_frame):
+        '''
+        tfを取得する
+
+        Parameters
+        ----------
+        after_frame : strings
+            変換後のフレーム
+        before_frame : strings
+            変換前のフレーム
+
+        Returns
+        -------
+        trans : tf
+            tf
+        '''
         tfBuffer = tf2_ros.Buffer()
         listener = tf2_ros.TransformListener(tfBuffer)
         try:
-            # カメラ → ベースリンクへの座標変換を取得
-            trans1 = tfBuffer.lookup_transform('base_link', self.cam_frame, rospy.Time(0), rospy.Duration(3.0))
-            # ベースリンク → マップへの座標変換を取得
-            trans2 = tfBuffer.lookup_transform('map', 'base_link', rospy.Time(0), rospy.Duration(3.0))
+            trans = tfBuffer.lookup_transform(after_frame, before_frame, rospy.Time(0), rospy.Duration(3.0))
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
             print(e)
         else:
-            goal = self.transform_pose(self.calc_goal(self.transform_point(point, trans1)), trans2)
-            goal_pose = MoveBaseGoal()
-            goal_pose.target_pose.header.stamp = rospy.Time.now()
-            goal_pose.target_pose.header.frame_id = 'map'
-            goal_pose.target_pose.pose = goal
-
-            client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-            client.wait_for_server()
-            #rospy.loginfo('connected to server')
-            client.send_goal(goal_pose)
-            rospy.loginfo('Send goal pos : [%5.3f, %5.3f, %5.3f]',
-                          goal.position.x, goal.position.y, goal.position.z)
-            self.set_marker(goal_pose)
-            #client.wait_for_result()
-            client.wait_for_result(rospy.Duration(10))
-            rospy.loginfo(client.get_state())
-			#http://docs.ros.org/kinetic/api/actionlib_msgs/html/msg/GoalStatus.html
-            Status = GoalStatus()
-            if client.get_state() != Status.SUCCEEDED:
-                client.cancel_goal()
-                rospy.loginfo('Failed to Move')
-            else:
-                rospy.loginfo('Succeed to Move')
-  
-        return #client.get_state()
+            return trans
 
     def transform_point(self, point, trans):
         '''
@@ -187,32 +209,32 @@ class MoveCoordinate:
 
         return new_pose
 
-    def calc_goal(self, point):
+    def calc_goal(self, point_base, obj_radius=0, phi=0):
         '''
         オブジェクトの位置からゴール位置を計算する。
 
         Parameters
         ----------
-        point : geometry_msgs/Point
-            検出したオブジェクトの座標
-        distance : float
+        point_base : geometry_msgs/Point
+            検出したオブジェクトの座標(base_link座標系)
+        dist : float
             オブジェクトとゴール間の距離(m)
-        object_radius : float
+        obj_radius : float, optional
             オブジェクトの半径(m)
         phi : float
-            ゴール姿勢の角度(rad)
+            ゴール姿勢の角度(rad), optional
 
         Returns
         -------
         pose : geometry_msgs/Pose
             ゴールの姿勢
         '''
-        theta = np.arctan2(point.y, point.x)  #　現在地からオブジェクトまでの角度
+        theta = np.arctan2(point_base.y, point_base.x)  #　現在地からオブジェクトまでの角度
 
         # ゴール位置の計算
         pose = Pose()
-        pose.position.x = point.x + self.obj_radius*np.cos(theta) - (self.dist + self.obj_radius)*np.cos(theta - self.phi)
-        pose.position.y = point.y + self.obj_radius*np.sin(theta) - (self.dist + self.obj_radius)*np.sin(theta - self.phi)
+        pose.position.x = point_base.x + obj_radius*np.sin(theta) - (self.dist + obj_radius)*np.sin(theta - phi)
+        pose.position.y = point_base.y + obj_radius*np.cos(theta) - (self.dist + obj_radius)*np.cos(theta - phi)
         pose.position.z = 0
 
         q = tf.transformations.quaternion_about_axis(theta - self.phi, (0,0,1))
@@ -237,7 +259,7 @@ class MoveCoordinate:
         """
         # Set Marker data
         marker_data = Marker()
-        marker_data.header.frame_id = "map"
+        marker_data.header.frame_id = self.map_frame
         marker_data.header.stamp = rospy.Time.now()
         marker_data.ns = "basic_shapes"
         marker_data.id = 0
@@ -260,7 +282,6 @@ class MoveCoordinate:
 if __name__ == '__main__':
     rospy.init_node('move_object_point')
     MC = MoveCoordinate()
-    MC.cam_frame = 'base_link'
     point = Point()
     point.x = 0
     point.y = 0
