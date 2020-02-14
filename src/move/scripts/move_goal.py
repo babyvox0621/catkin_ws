@@ -43,7 +43,11 @@ class MoveCoordinate:
         # 座標変換
         trans_base2map = self.get_tf(self.map_frame, self.base_frame)
         point_base = self.transform_point(point_cam, self.trans_cam2base)
-        pose_map = self.transform_pose(self.calc_goal(point_base), trans_base2map)
+        print("point_base", point_base)
+        pose_base = self.calc_goal(point_base)
+        print("pose_base", pose_base)
+        pose_map = self.transform_pose(pose_base, trans_base2map)
+        print("pose_map", pose_map)
         # 移動
         ret = self.move_pose(pose_map)
         return ret
@@ -233,8 +237,8 @@ class MoveCoordinate:
 
         # ゴール位置の計算
         pose = Pose()
-        pose.position.x = point_base.x + obj_radius*np.sin(theta) - (self.dist + obj_radius)*np.sin(theta - phi)
-        pose.position.y = point_base.y + obj_radius*np.cos(theta) - (self.dist + obj_radius)*np.cos(theta - phi)
+        pose.position.x = point_base.x + obj_radius*np.cos(theta) - (self.dist + obj_radius)*np.cos(theta - phi)
+        pose.position.y = point_base.y + obj_radius*np.sin(theta) - (self.dist + obj_radius)*np.sin(theta - phi)
         pose.position.z = 0
 
         q = tf.transformations.quaternion_about_axis(theta - phi, (0,0,1))

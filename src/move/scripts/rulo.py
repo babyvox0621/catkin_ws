@@ -39,8 +39,9 @@ class Rulo:
                 # simple version
                 Cmd = adjust.Adjust()
                 MC = move_goal.MoveCoordinate()
-                rot_amount = np.deg2rad(45) # rotation amount of random move
+                rot_amount = np.deg2rad(30) # rotation amount of random move
                 move_forward_amount = 0.3
+                Cmd.angular_speed = np.deg2rad(15)
                 Cmd.rotate(rot_amount)
                 self.cnt_angle += 1
                 if self.cnt_angle*rot_amount == 2*np.pi:
@@ -66,7 +67,7 @@ class Rulo:
                     point_base = Point()
                     point_base.x = move_forward_amount
                     MC.dist = 0
-                    ret = MC.move_pose(MC.calcgoal(Point_base))
+                    ret = MC.move_pose(MC.calc_goal(point_base))
                     self.cnt_angle = 0
 
                 send.ret = 0 # succeed
@@ -97,7 +98,7 @@ class Rulo:
 
                 #座標変換
                 point_base = MC.transform_point(point_cam, MC.trans_cam2base)
-                angle = np.arctan2(point_base.x, point_base.y)
+                angle = np.arctan2(point_base.y, point_base.x)
                 Cmd.rotate(angle) # 回転
                 if(msg.msg.key == 0):
                     distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.18 # オブジェクトへの移動
