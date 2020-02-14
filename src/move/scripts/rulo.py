@@ -34,10 +34,10 @@ class Rulo:
             rospy.loginfo("%d", msg.topic_id)
 
             if(msg.msg.id == 0): # random move
-                rospy.loginfo("moving without goal")
+                rospy.loginfo("Adjust without goal")
 
                 # simple version
-                Cmd = adjust.Cmd()
+                Cmd = adjust.Adjust()
                 MC = move_goal.MoveCoordinate()
                 rot_amount = np.deg2rad(45) # rotation amount of random move
                 move_forward_amount = 0.3
@@ -74,7 +74,7 @@ class Rulo:
 
             elif(msg.msg.id == 1): # move target
 
-                rospy.loginfo("moving with goal %f %f %f", msg.msg.x3d, msg.msg.y3d, msg.msg.z3d)
+                rospy.loginfo("Adjust with goal %f %f %f", msg.msg.x3d, msg.msg.y3d, msg.msg.z3d)
                 point_cam = Point()
                 point_cam.x = msg.msg.x3d
                 point_cam.y = msg.msg.y3d
@@ -92,7 +92,7 @@ class Rulo:
                 point_cam.y = msg.msg.y3d
                 point_cam.z = msg.msg.z3d
 
-                Cmd = adjust.Moving()
+                Cmd = adjust.Adjust()
                 MC = move_goal.MoveCoordinate()
 
                 #座標変換
@@ -107,13 +107,13 @@ class Rulo:
                 send.ret = 0 # succeed
 
             elif(msg.msg.id == 3): # move origin
-                rospy.loginfo("moving with goal %f %f %f", 0,0,0)
+                rospy.loginfo("Adjust with goal %f %f %f", 0,0,0)
                 point_map = self.point_map_0
                 #point_map.x = 0
                 #point_map.y = 0
                 #point_map.z = 0
                 MC = move_goal.MoveCoordinate()
-                Cmd = adjust.Cmd()
+                Cmd = adjust.Adjust()
                 trans_map2base = MC.get_tf('base_link', 'map')
                 point_base = MC.transform_point(point_map, trans_map2base)
                 Cmd.rotate(point_base) # 移動方向に回転
@@ -127,7 +127,7 @@ class Rulo:
                 point_cam.y = msg.msg.y3d
                 point_cam.z = msg.msg.z3d
 
-                Cmd = adjust.Moving()
+                Cmd = adjust.Adjust()
                 MC = move_goal.MoveCoordinate()
 
                 #座標変換

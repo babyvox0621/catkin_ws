@@ -43,9 +43,9 @@ class MoveCoordinate:
         # 座標変換
         trans_base2map = self.get_tf(self.map_frame, self.base_frame)
         point_base = self.transform_point(point_cam, self.trans_cam2base)
-        pose_map = self.transform_pose(self.calc_goal(point), self.trans_base2map)
+        pose_map = self.transform_pose(self.calc_goal(point_base), trans_base2map)
         # 移動
-        ret = self.move_pose(pose)
+        ret = self.move_pose(pose_map)
         return ret
 
 
@@ -81,10 +81,10 @@ class MoveCoordinate:
         #rospy.loginfo(client.get_state())
 		#http://docs.ros.org/kinetic/api/actionlib_msgs/html/msg/GoalStatus.html
         Status = GoalStatus()
-        while(client.getstate() != Status.SUCCEEDED):
-            if ((client.getstate()!=Status.ACTIVE)or(client.getstate()!=Status.SUCCEEDED)):
-                client.wait_for_result(rospy.Duration(15)) # timeout時間を設定
-                if client.getstate()!=Status.ACTIVE:
+        while(client.get_state() != Status.SUCCEEDED):
+            if ((client.get_state()!=Status.ACTIVE)or(client.get_state()!=Status.SUCCEEDED)):
+                client.wait_for_result(rospy.Duration(5)) # timeout時間を設定
+                if client.get_state()!=Status.ACTIVE:
                     break
             client.wait_for_result(rospy.Duration(1))
             
@@ -237,7 +237,7 @@ class MoveCoordinate:
         pose.position.y = point_base.y + obj_radius*np.cos(theta) - (self.dist + obj_radius)*np.cos(theta - phi)
         pose.position.z = 0
 
-        q = tf.transformations.quaternion_about_axis(theta - self.phi, (0,0,1))
+        q = tf.transformations.quaternion_about_axis(theta - phi, (0,0,1))
 
         pose.orientation.x = q[0]
         pose.orientation.y = q[1]

@@ -9,7 +9,7 @@ import tf2_ros
 import tf
 
 
-class Cmd:
+class Adjust:
 
 	def __init__(self):
 		
@@ -42,7 +42,6 @@ class Cmd:
 		if distance < 0:
 			twist.linear.x = -self.liner_speed
 
-		distance = r
 		t0 = rospy.Time.now().to_sec()
 		current_distance = 0
 		while(abs(current_distance) < abs(distance)):
@@ -53,7 +52,7 @@ class Cmd:
 if __name__ == '__main__':
 	rospy.init_node("adjust")
 	try:
-		cmd = Cmd()
+		cmd = Adjust()
 		point = Point()
 		point.x = 0.2
 		point.y = 0.3
