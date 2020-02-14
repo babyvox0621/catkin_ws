@@ -21,12 +21,15 @@ def on_connect(client, userdata, flags, respons_code):
 
 def on_message(client, userdata, msg):
     print(msg.topic + " " + str(msg.payload))
-    data = json.loads(msg.payload.decode("utf-8"))["data"][0]
-    data = {key:value.strip() for key, value in data.items()}
-    print(data)
+    print("1")
+    data = json.loads(msg.payload.decode("utf-8"))["data"]
+    if data == "beer":
+        print("beer")
+    else:
+        print("not beer")
+    #data = {key:value.strip() for key, value in data.items()}
+    print("2")
     #if "beer" in data.value():
-    run_rosscript('voice', 'test.py')
-    print('action : beer')
         
 
 client = mqtt.Client()
