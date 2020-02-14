@@ -4,10 +4,10 @@ import json
 import subprocess
 #https://qiita.com/msquare33/items/9f0312585bb4707c686b
 
-TOKEN = "token_c0XbHqVV7YsANJjN" # 変更箇所
+TOKEN = "token_c0XbHqVV7YsANJjN"
 HOSTNAME = "mqtt.beebotte.com"
 PORT = 8883
-TOPIC = "Digital2019/VoiceRecognition" # 変更箇所
+TOPIC = "Digital2019/VoiceRecognition"
 CACERT = "mqtt.beebotte.com.pem"
 
 def run_rosscript(pkg,filename):
