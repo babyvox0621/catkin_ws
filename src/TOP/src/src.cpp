@@ -88,8 +88,8 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
             send.msg.x2d = msg->msg.x2d;
             send.msg.y2d = msg->msg.y2d; //2d position
             if(object == 39){
-              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/found.wav 6");
-              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/going.wav 6");
+              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/found.wav 3");
+              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/going.wav 4");
             }
             pub_commond.publish(send);
           }
@@ -99,13 +99,13 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
               if(msg->msg.z3d <= THRESH_DIST){ //close to goal enough
                 send.msg.id = 2; //pose adujstment
                 status = 4; //trans to 微調整
-                system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/tweak.wav 6");
+                system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/tweak.wav 5");
                 ROS_INFO("close to goal -> adjustment");
               }
               else{ //still far from goal
                 send.msg.id = 1; //moving with goal
                 status = 3; //keep status 3
-                system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/going.wav 6");
+                system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/going.wav 4");
                 ROS_INFO("still far -> moving with goal");
               }
               topic_id++;
@@ -144,14 +144,14 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
           ROS_INFO("object lost");
           if(status == 2){
             if(object == 39){
-              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 6");
+              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 3");
             }
             else if(object == 0){
               system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
             }
           }
           else if(status == 3){
-            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/lost.wav 6");
+            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/lost.wav 3");
           }
           pub_commond.publish(send);
   	    }
@@ -170,13 +170,13 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
             topic_id++;
             send.topic_id = topic_id;
             send.msg.id = 0; //catch
-            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/conceal.wav 6");
+            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/conceal.wav 3");
             ROS_INFO("adjustment finished");
             pub_commond.publish(send);
           }
           else{ //not close to center still need adjustment
             ROS_INFO("%d adjustment continue...", abs(msg->msg.x2d-320));
-            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/tweak.wav 6");
+            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/tweak.wav 5");
             send.msg.id = 2; //pose adjustment
             status = 4; //keep status 3
             send.node = 2;
@@ -198,7 +198,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
         }
         else if(msg->ret == 1){ //not found
           ROS_INFO("object lost");
-          system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/lost.wav 6");
+          system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/lost.wav 3");
           status = 2; //trans to 探索
           //set commond info
           send.node = 2; //commond for rulo
@@ -206,7 +206,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
           send.topic_id = topic_id;
           send.msg.id = 0; //moving without goal (random move)
           if(object == 39){
-            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 6");
+            system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 3");
           }
           else if(object == 0){
             system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
@@ -233,7 +233,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
 
 // rulo callback
 void obj_TOP::RuloCallback(const TOP::commond::ConstPtr& msg){
-  ros::Rate loop_rate(0.2);
+  ros::Rate loop_rate(1);
 	//create the msg for publish
 	TOP::commond send;
   //check topic id
@@ -396,7 +396,7 @@ void obj_TOP::SendFirstMsg(){
   send.node = 1; //commond for yolo
   send.msg.id = object;
   send.topic_id = topic_id;
-  system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 6");
+  system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 3");
   pub_commond.publish(send);
   ROS_INFO("send done %d", topic_id);
 }
@@ -411,7 +411,7 @@ int main(int argc, char **argv){
   ROS_INFO("press g then press enter");
   getchar();
   ROS_INFO("OK");
-  system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/start.wav 6");
+  system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/start.wav 3");
   obj_TOP.SendFirstMsg();  
 	ros::spin();
 	return 0;

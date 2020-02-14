@@ -1,4 +1,8 @@
 build/
 devel/
+install/
 src/darknet_ros/
 src/ddynamic_reconfigure/
+src/rtimulib_ros/
+src/realsense2_camera
+src/realsense2_description

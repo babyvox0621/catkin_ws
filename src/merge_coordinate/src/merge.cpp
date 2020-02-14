@@ -44,6 +44,9 @@ private:
     ros::NodeHandle nh;
     ros::Subscriber sub_rgb, sub_depth, sub_TOP;
     ros::Publisher pub_pos, pub_run;
+    //Fenny test
+    //image_transport::ImageTransport imageTransport_;
+    //image_transport::Subscriber imageSubscriber_;
     float obj_pos_x;
     float obj_pos_y;
     float obj_pos_z;
@@ -55,9 +58,13 @@ private:
     //int inter_flag=0;
 };
  
-obj_recognition::obj_recognition(){
+obj_recognition::obj_recognition()
+    //:imageTransport_(nh)
+{
     sub_rgb = nh.subscribe<darknet_ros_msgs::BoundingBoxes>("darknet_ros/bounding_boxes", 1, &obj_recognition::rgbImageCallback, this);
     sub_depth = nh.subscribe<sensor_msgs::Image>("camera/aligned_depth_to_color/image_raw", 1, &obj_recognition::depthImageCallback, this);
+    //Fenny test
+    //imageSubscriber_ = imageTransport_.subscribe("camera/aligned_depth_to_color/image_raw", 1, &obj_recognition::depthImageCallback, this, image_transport::TransportHints("compressed"));
     sub_TOP = nh.subscribe<TOP::commond>("Commond_TOP", 1, &obj_recognition::TOPCallback, this);
     pub_pos = nh.advertise<TOP::commond>("results_YOLO", 1);
     pub_run = nh.advertise<std_msgs::Int32>("YOLO_GO", 1);
@@ -141,7 +148,7 @@ void obj_recognition::depthImageCallback(const sensor_msgs::ImageConstPtr& msg){
     cv_bridge::CvImagePtr cv_ptr;
     TOP::commond send;
     try{
-        cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::TYPE_32FC1);
+        cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::TYPE_32FC1);//TYPE_32FC1
     }catch (cv_bridge::Exception& ex){
         ROS_ERROR("error");
         exit(-1);
