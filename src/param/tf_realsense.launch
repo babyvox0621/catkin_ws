@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Standardized by lhan@wizrobo.com @2016-01-02 -->
+<launch>
+
+
+  <!-- Publish tf matrix between base_link and laser -->
+  <node name="static_transform_publisher_rs" pkg="tf" type="static_transform_publisher" args="0.130 0 0 -0.5 0.5 -0.5 0.5 /base_link /camera_link 100"/>
+<!--
+  <node name="static_transform_publisher3" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 /base_link /base_footprint 100"/>
+  <node name="static_transform_publisher4" pkg="tf" type="static_transform_publisher" args="0.048 0 0 0 0 0 /base_footprint /hokuyo_laser_link
+ 100"/>
+-->
+
+</launch>

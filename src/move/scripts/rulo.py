@@ -16,7 +16,6 @@ class Rulo:
         self.sub_rulo = rospy.Subscriber('Commond_TOP', commond, self.callback)
         self.pub_rulo = rospy.Publisher('results_RULO', commond, queue_size=1)
         self.cnt_angle = 0
-        self.cnt_liner = 0
 
         # get current position
         MC = move_goal.MoveCoordinate()
@@ -33,8 +32,9 @@ class Rulo:
             if(msg.msg.id == 0):  # random move
                 rospy.loginfo("Move without goal")
                 Adj = adjust.Adjust()
-                Adj.angular_speed = np.deg2rad(15)
-                Adj.rotate(np.deg2rad(30))
+                Adj.angular_speed = np.deg2rad(20)
+                Adj.rotate(np.deg2rad(20))
+                #print("ret:", ret)
                 self.cnt_angle += 1
 
                 if(self.cnt_angle * np.deg2rad(30) == 2 * np.pi):
@@ -50,7 +50,7 @@ class Rulo:
                     point_base.y = 0
                     point_base.z = 0
                     pose_base = MC.calc_goal(point_base, dist=0)
-                    pose_map = MC.transfer_pose(pose_base,
+                    pose_map = MC.transform_pose(pose_base,
                                                 MC.get_tf('map', 'base_link'))
                     ret = MC.move_pose(pose_map)
 
@@ -108,7 +108,7 @@ class Rulo:
                 Adj.rotate(theta)  # 回転
 
                 if(msg.msg.key == 0):  # オブジェクトへの移動
-                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.18
+                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.30
                 elif(msg.msg.key == 1):  # 人への移動
                     distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.30
                 Adj.back_and_forward(distance)  # 直進
@@ -136,6 +136,7 @@ class Rulo:
 
                 theta = np.arctan2(point_base.y, point_base.x)
                 Adj = adjust.Adjust()
+                Adj.angular_speed = np.deg2rad(45)
                 Adj.rotate(theta)  # 移動方向に回転
                 MC.move_pose(pose_map)  # 自律移動
 
@@ -172,6 +173,7 @@ class Rulo:
                 rospy.loginfo("invalid move mode @RULO")
 
             self.pub_rulo.publish(send)
+            rospy.loginfo('published')
         else:
             rospy.loginfo("this topic is not for rulo")
 
