@@ -141,8 +141,8 @@ void obj_recognition::depthImageCallback(const sensor_msgs::ImageConstPtr& msg){
     //ROS_INFO("start...");
     int x1, x2, y1, y2;
     int i, j, k;
-    int width = WIDTH;
-    int height = HEIGHT;
+    int width;
+    int height;
     float sum = 0.0;
     float ave;
     cv_bridge::CvImagePtr cv_ptr;
@@ -162,27 +162,36 @@ void obj_recognition::depthImageCallback(const sensor_msgs::ImageConstPtr& msg){
 #if 1  //debug
     send.topic_id = topic_id;
     if(detected){
+        float xmin_c,xmax_c,ymin_c,ymax_c;
+        xmin_c = (obj_pos_x - ((xmax-xmin)*0.7f)/2.0f);
+        xmax_c = (obj_pos_x + ((xmax-xmin)*0.7f)/2.0f);
+        ymin_c = (obj_pos_y - ((ymax-ymin)*0.7f)/2.0f);
+        ymax_c = (obj_pos_y + ((ymax-ymin)*0.7f)/2.0f);
+        width = (xmax-xmin)*0.3f/2.0f;
+        height = (ymax-ymin)*0.3f/2.0f;
+        if(width > WIDTH) width = WIDTH;
+        if(height > HEIGHT) height = HEIGHT;
+        if (xmin_c<0)
+            xmin_c=0;
+        if (xmax_c>639)
+            xmax_c=639;
+        if (ymin_c<0)
+            ymin_c=0;
+        if (ymax_c>479)
+            ymax_c=479; 
         send.ret = 0;
-        x1 = obj_pos_x - width;
-        if(x1<0)
-            x1=0;
-        if(x1<xmin)
-        	x1=xmin;
+        x1 = obj_pos_x - width;        
+        if(x1<xmin_c)
+        	x1=xmin_c;
         x2 = obj_pos_x + width;
-        if(x2>=639)
-            x2=639;
-        if(x2>=xmax)
-        	x2=xmax;
+        if(x2>=xmax_c)
+        	x2=xmax_c;
         y1 = obj_pos_y - height;
-        if(y1<0)
-            y1=0;
-        if(y1<ymin)
-        	y1=ymin;
+        if(y1<ymin_c)
+        	y1=ymin_c;
         y2 = obj_pos_y + height;
-        if(y2>=479)
-            y2=479;
-        if(y2>=ymax)
-        	y2=ymax;
+        if(y2>=ymax_c)
+        	y2=ymax_c;
     
     
         int counter=0;
@@ -227,7 +236,7 @@ void obj_recognition::depthImageCallback(const sensor_msgs::ImageConstPtr& msg){
             send.msg.x3d = (xx*ave)/FOCUS/1000.0;
             send.msg.y3d = (yy*ave)/FOCUS/1000.0;
             send.msg.z3d = ave/1000.0;
-            ROS_INFO("results %f %f %f", send.msg.x3d, send.msg.y3d, send.msg.z3d);
+            ROS_INFO("results %d %f %f %f", counter, send.msg.x3d, send.msg.y3d, send.msg.z3d);
         }        
     }
     else

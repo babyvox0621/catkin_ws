@@ -27,8 +27,8 @@ public:
 };
 
 dummy_voice::dummy_voice(){
-    sub_voice = nh.subscribe<TOP::commond>("Commond_TOP", 1, &dummy_voice::TOPCallback, this);
-    sub_google = nh.subscribe<TOP::commond>("results_GOOGLE", 1, &dummy_voice::GOOGLECallback, this);
+    sub_voice = nh.subscribe<TOP::commond>("Commond_TOP", 10, &dummy_voice::TOPCallback, this);
+    sub_google = nh.subscribe<TOP::commond>("results_GOOGLE", 10, &dummy_voice::GOOGLECallback, this);
     pub_voice = nh.advertise<TOP::commond>("results_VOICE", 1);
     flag_1 = false;
     flag_2 = false;
@@ -45,10 +45,12 @@ void dummy_voice::GOOGLECallback(const TOP::commond::ConstPtr& msg){
         if(msg->msg.id == 1){//beer
             flag_1 = true;
             flag_2 = false;
+            ROS_INFO("flag_1 true | flag_2 false");
         }
         else if(msg->msg.id == 2){//drink
             flag_1 = false;
             flag_2 = true;
+            ROS_INFO("flag_1 false | flag_2 true");
         }
         else{
             ROS_INFO("wrong msg id from google");
@@ -66,10 +68,12 @@ void dummy_voice::TOPCallback(const TOP::commond::ConstPtr& msg){
         if(msg->msg.id == 0){//waiting
             flag_3 = true;
             flag_4 = false;
+            ROS_INFO("flag_3 true | flag_4 false");
         }
         else if(msg->msg.id == 1){
             flag_3 = false;
             flag_4 = true;
+            ROS_INFO("flag_3 false | flag_4 true");
         }
         else{
             ROS_INFO("wrong msg id from TOP");
@@ -85,7 +89,7 @@ int main(int argc, char **argv){
     ros::NodeHandle nh("~");
     dummy_voice dummy_voice;
     ROS_INFO("runing...");
-    ros::Rate loop_rate(5);
+    ros::Rate loop_rate(30);
     TOP::commond send;
     while(ros::ok())
     {
@@ -109,7 +113,7 @@ int main(int argc, char **argv){
             dummy_voice.pub_voice.publish(send);
         }
         else{
-            ROS_INFO("no topic received");
+            //ROS_INFO("no topic received");
         }
         loop_rate.sleep();
     }
