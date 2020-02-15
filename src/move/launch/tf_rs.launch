@@ -4,7 +4,7 @@
 
 
   <!-- Publish tf matrix between base_link and laser -->
-  <node name="static_transform_publisher_rs" pkg="tf" type="static_transform_publisher" args="0.130 0.015 0 -0.5 0.5 -0.5 0.5 /base_link /camera_link 100"/>
+  <node name="static_transform_publisher_rs" pkg="tf" type="static_transform_publisher" args="0.130 0 0 -0.5 0.5 -0.5 0.5 /base_link /camera_link 100"/>
 <!--
   <node name="static_transform_publisher3" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 /base_link /base_footprint 100"/>
   <node name="static_transform_publisher4" pkg="tf" type="static_transform_publisher" args="0.048 0 0 0 0 0 /base_footprint /hokuyo_laser_link

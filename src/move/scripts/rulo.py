@@ -72,7 +72,7 @@ class Rulo:
                 point_cam.z = msg.msg.z3d
 
                 MC = move_goal.MoveCoordinate()
-                point_base = MC.ransform_point(point_cam,
+                point_base = MC.transform_point(point_cam,
                                                MC.get_tf('base_link', 'camera_link'))
                 pose_base = MC.calc_goal(point_base, dist=0.4)
                 pose_map = MC.transform_pose(pose_base,
@@ -102,10 +102,10 @@ class Rulo:
                 MC = move_goal.MoveCoordinate()
                 point_base = MC.transform_point(point_cam,
                                                 MC.get_tf('base_link', 'camera_link'))
-                theta = np.arctan2(point_base.x, point_base.y)
+                theta = np.arctan2(point_base.y, point_base.x)
 
                 Adj = adjust.Adjust()
-                Adj.rotate(theta - np.pi/2)  # 回転
+                Adj.rotate(theta)  # 回転
 
                 if(msg.msg.key == 0):  # オブジェクトへの移動
                     distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.18
@@ -134,9 +134,9 @@ class Rulo:
                 pose_map = MC.transform_pose(pose_base,
                                              MC.get_tf('map', 'base_link'))
 
-                theta = np.arctan2(point_base.x, point_base.y)
+                theta = np.arctan2(point_base.y, point_base.x)
                 Adj = adjust.Adjust()
-                Adj.rotate(theta - np.pi)  # 移動方向に回転
+                Adj.rotate(theta)  # 移動方向に回転
                 MC.move_pose(pose_map)  # 自律移動
 
                 print("goal@base ", pose_base)
@@ -159,9 +159,9 @@ class Rulo:
                 MC = move_goal.MoveCoordinate()
 
                 point_base = MC.transform_point(point_cam, MC.trans_cam2base)
-                theta = np.arctan2(point_base.x, point_base.y)
+                theta = np.arctan2(point_base.y, point_base.x)
                 rospy.loginfo("turn %f degree", np.rad2deg(theta))
-                Adj.rotate(theta - np.pi)  # 回転
+                Adj.rotate(theta)  # 回転
 
                 print("theta :%f", np.rad2deg(theta))
                 print("-------------------------------------------")

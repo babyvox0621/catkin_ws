@@ -233,15 +233,15 @@ class MoveCoordinate:
         pose : geometry_msgs/Pose
             ゴールの姿勢
         '''
-        theta = np.arctan2(point_base.x, point_base.y)  # 現在地からオブジェクトまでの角度
+        theta = np.arctan2(point_base.y, point_base.x)  # 現在地からオブジェクトまでの角度
 
         # ゴール位置の計算
         pose = Pose()
-        pose.position.x = point_base.x - dist * np.sin(theta)
-        pose.position.y = point_base.y - dist * np.cos(theta)
+        pose.position.x = point_base.x - dist * np.cos(theta)
+        pose.position.y = point_base.y - dist * np.sin(theta)
         pose.position.z = 0
 
-        q = tf.transformations.quaternion_about_axis(theta - np.pi, (0, 0, 1))
+        q = tf.transformations.quaternion_about_axis(theta, (0, 0, 1))
 
         pose.orientation.x = q[0]
         pose.orientation.y = q[1]
