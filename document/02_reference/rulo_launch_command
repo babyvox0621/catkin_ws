@@ -1,0 +1,13 @@
+#rulo
+roslaunch navi_param ccr.launch
+roslaunch navi_param create_map_hokuyo.launch
+roslaunch move tf_rs.launch
+rosrun move rulo.py
+
+#arm
+roslaunch crane_plus_src controller_manager.launch 
+roslaunch crane_plus_src start_tilt_controller.launch
+rosrun crane_plus_src arm.py
+
+#camera
+roslaunch realsense2_camera rs_rgbd.launch
