@@ -147,7 +147,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
               //system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 3");
             }
             else if(object == 0){
-              system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
+              //system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
             }
           }
           else if(status == 3){
