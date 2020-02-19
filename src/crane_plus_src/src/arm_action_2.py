@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-import move_arm_v1 as move_arm
+import move_arm_vo as move_arm
 import numpy as np
 
 class arm_action:
@@ -23,7 +23,7 @@ class arm_action:
         l23 = 0.083
         l34 = 0.0935
 
-
+        """
         # catch pose
         self.arm.Step = 2
         self.arm.Tilt[2] = np.pi/4
@@ -40,7 +40,7 @@ class arm_action:
         print(self.arm.Tilt[3])
         #self.arm.Tilt[2] = np.pi/4
         self.arm.Tilt[4] = self.arm.Tilt[2] - self.arm.Tilt[3] - np.pi/18
-        
+        """
 
         """
         # post catch
@@ -51,13 +51,13 @@ class arm_action:
         self.arm.Tilt[4] = self.arm.Tilt[2] - self.arm.Tilt[3] - np.pi/18
         """
 
-        """      
+             
         #left position
         self.arm.Tilt[1] = np.pi/2
         self.arm.Tilt[2] = -np.pi/2
         self.arm.Tilt[3] = np.pi/3.5
         self.arm.Tilt[4] = 0
-        """
+        
         self.arm.move_tilt()
 
     # def catch_01(self):

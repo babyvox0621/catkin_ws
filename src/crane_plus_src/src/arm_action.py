@@ -24,8 +24,8 @@ class arm_action:
     def pregrab(self):
 		#catch
         self.arm.y = 0.20 #8
-        self.arm.z = 0.0 #0
-        #self.arm.x+=0.001 #6
+        self.arm.z = -0.03 #0
+        #self.arm.x = 0.05 #6
         self.grip = 95
         if self.grip>100:
 			self.grip = 100
@@ -36,6 +36,17 @@ class arm_action:
 		#catch
         self.arm.y = 0.28 #8
         self.arm.z = 0.0 #0
+        #self.arm.x+=0.001 #6
+        self.grip = 45
+        if self.grip>100:
+			self.grip = 100
+        self.arm.move_xyz()
+        self.arm.grip(self.grip) #7
+
+    def postgrab(self):
+		#catch
+        self.arm.y = 0.20 #8
+        self.arm.z = -0.03 #0
         #self.arm.x+=0.001 #6
         self.grip = 45
         if self.grip>100:
@@ -54,10 +65,21 @@ class arm_action:
         self.arm.move_xyz()
         self.arm.grip(self.grip) #7
 
+    def prerelease(self):
+		#catch
+        self.arm.y = 0.20 #8
+        self.arm.z = 0.0 #0
+        #self.arm.x+=0.001 #6
+        self.grip = 45
+        if self.grip>100:
+			self.grip = 100
+        self.arm.move_xyz()
+        self.arm.grip(self.grip) #7
+
     def release(self):
 		#catch back
-        self.arm.y = 0.15 #5
-        self.arm.z = 0.10 #2
+        self.arm.y = 0.28 #5
+        self.arm.z = 0.0 #2
         #self.arm.x-=0.001 #4
         self.arm.move_xyz()
         self.grip = 95
@@ -85,6 +107,12 @@ if __name__ == '__main__':
         #arm.release()
         arm.pregrab()
         arm.grab()
+        arm.postgrab()
+        arm.maintain()
+        #arm.prerelease()
+        #arm.release()
+        #arm.pregrab()
+        arm.start_pos()
         #arm.maintain()
         #arm.release()
         #arm.start_pos()

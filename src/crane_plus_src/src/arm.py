@@ -19,13 +19,17 @@ class Arm:
             if (msg.msg.id == 0):
                 self.act.pregrab()
                 self.act.grab()
+                self.act.postgrab()
                 self.act.maintain()
                 send.ret = 0
-                rospy.loginfo("arm moved")
+                rospy.loginfo("arm grab")
             elif (msg.msg.id == 1):
+                self.act.prerelease()
                 self.act.release()
-                self.act.startpos()
+                self.act.pregrab()
+                self.act.start_pos()
                 send.ret = 0
+                rospy.loginfo("arm release")
             else:
                 send.ret = 0
             self.pub_arm.publish(send)

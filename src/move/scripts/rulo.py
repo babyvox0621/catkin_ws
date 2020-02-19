@@ -36,7 +36,7 @@ class Rulo:
                 Adj.rotate(np.deg2rad(20))
                 #print("ret:", ret)
                 self.cnt_angle += 1
-
+                """
                 if(self.cnt_angle * np.deg2rad(30) == 2 * np.pi):
                     self.cnt_angle = 0
                     angle = np.random.rand() * 2 * np.pi
@@ -58,7 +58,7 @@ class Rulo:
                     print("-------------------------------------------")
                     print("goal@map", pose_map)
                     print("-------------------------------------------")
-
+                """
                 send.ret = 0  # succeed
 
             elif(msg.msg.id == 1):  # move target
@@ -105,6 +105,7 @@ class Rulo:
                 theta = np.arctan2(point_base.y, point_base.x)
 
                 Adj = adjust.Adjust()
+                Adj.angular_speed = np.deg2rad(20)
                 Adj.rotate(theta)  # 回転
 
                 if(msg.msg.key == 0):  # オブジェクトへの移動
