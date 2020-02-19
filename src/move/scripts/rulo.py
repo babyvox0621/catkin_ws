@@ -74,7 +74,7 @@ class Rulo:
                 MC = move_goal.MoveCoordinate()
                 point_base = MC.transform_point(point_cam,
                                                MC.get_tf('base_link', 'camera_link'))
-                pose_base = MC.calc_goal(point_base, dist=0.4)
+                pose_base = MC.calc_goal(point_base, dist=0.6)
                 pose_map = MC.transform_pose(pose_base,
                                              MC.get_tf('map', 'base_link'))
                 MC.move_pose(pose_map)
@@ -109,9 +109,9 @@ class Rulo:
                 Adj.rotate(theta)  # 回転
 
                 if(msg.msg.key == 0):  # オブジェクトへの移動
-                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.30
+                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.405
                 elif(msg.msg.key == 1):  # 人への移動
-                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.30
+                    distance = np.sqrt(point_base.x**2 + point_base.y**2) - 0.405
                 Adj.back_and_forward(distance)  # 直進
 
                 print("target@cam", point_cam)
