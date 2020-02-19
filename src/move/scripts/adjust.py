@@ -36,7 +36,7 @@ class Adjust:
             self.pub.publish(twist)
             R.sleep()
         twist.angular.z = 0
-        self.pub.publish(twist)        
+        #self.pub.publish(twist)        
         #time.sleep(1.5)
         rospy.loginfo('finish rotate')
 

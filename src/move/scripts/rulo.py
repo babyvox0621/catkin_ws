@@ -74,7 +74,7 @@ class Rulo:
                 MC = move_goal.MoveCoordinate()
                 point_base = MC.transform_point(point_cam,
                                                MC.get_tf('base_link', 'camera_link'))
-                pose_base = MC.calc_goal(point_base, dist=0.6)
+                pose_base = MC.calc_goal(point_base, dist=0.5)
                 pose_map = MC.transform_pose(pose_base,
                                              MC.get_tf('map', 'base_link'))
                 MC.move_pose(pose_map)

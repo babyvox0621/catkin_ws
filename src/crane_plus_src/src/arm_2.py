@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import rospy
 from move.msg import commond
 import move_arm_vo as move_arm
@@ -16,7 +17,7 @@ class Arm:
 
         # move to start position
         self.pose_upper()
-        self.arm.gripper(self.gripper_close)
+        self.arm.grip(self.gripper_close)
         self.pose_right_2()
         self.pose_right_1()
 
@@ -71,7 +72,7 @@ class Arm:
 
                 self.pose_right_2()
                 self.pose_upper()
-                self.gripper(self.gripper_open)
+                self.arm.grip(self.gripper_open)
                 self.pose_front()
                 self.pose_grip()
                 self.arm.grip(self.gripper_close)

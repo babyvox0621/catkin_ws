@@ -11,6 +11,6 @@ gnome-terminal --geometry=80x20+500+400 --window -e 'bash -c "roslaunch crane_pl
 sleep 5s
 gnome-terminal --geometry=80x20+1000+400 --window -e 'bash -c "roslaunch crane_plus_src start_tilt_controller.launch;exec bash"'
 sleep 5s
-gnome-terminal --geometry=80x20+0+800 --window -e 'bash -c "rosrun crane_plus_src arm.py;exec bash"'
+gnome-terminal --geometry=80x20+0+800 --window -e 'bash -c "rosrun crane_plus_src arm_2.py;exec bash"'
 gnome-terminal --geometry=80x20+0+800 --window -e 'bash -c "~/catkin_ws/src/param/set_normal.sh
 ;exec bash"'
