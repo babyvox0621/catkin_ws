@@ -9,8 +9,8 @@
 #include <TOP/commond.h>
 #include <stdlib.h>
 //check distance to tell whether trans status or not
-#define THRESH_DIST 0.5f
-#define THRESH_CENTER 100
+#define THRESH_DIST 0.6f
+#define THRESH_CENTER 50
 
 class obj_TOP{
 public:
@@ -163,7 +163,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
         //receive and check the results from yolo
         if(msg->ret == 0){ //found
           //set commond info
-          if(abs(msg->msg.x2d - 400) <= 100){ //close to center -> adjustment finished
+          if(abs(msg->msg.x2d - 370) <= 70){ //close to center -> adjustment finished
             status = 5; //trans to 把持 if object is タバコ
             //set commond info
             send.node = 3; //commond for arm
