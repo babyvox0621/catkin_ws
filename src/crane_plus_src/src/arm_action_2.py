@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-import move_arm_v1 as move_arm
+import move_arm_vo as move_arm
 import numpy as np
 
 class arm_action:
@@ -10,8 +10,7 @@ class arm_action:
         ####################
         #move_arm呼出し
         self.arm=move_arm.move_arm()
-        for i in range(6):
-            self.arm.Tilt[i] = 0
+
         """
         Tilt
         1:
@@ -22,42 +21,81 @@ class arm_action:
         """
         l23 = 0.083
         l34 = 0.0935
-
-
-        # catch pose
-        self.arm.Step = 2
-        self.arm.Tilt[2] = np.pi/4
-        self.arm.Tilt[3] = np.pi/3
-        self.arm.Tilt[4] = self.arm.Tilt[2] - self.arm.Tilt[3] - np.pi/18
-        Y = l23*np.cos(self.arm.Tilt[2]) + l34*np.cos(self.arm.Tilt[3])
-        Z = l23*np.sin(self.arm.Tilt[2]) - l34*np.sin(self.arm.Tilt[3])
-
-        
-        # pre catch
-        self.arm.Step = 2
-        self.arm.Tilt[2] = np.pi/2.5
-        self.arm.Tilt[3] = np.arcsin(-(Z - l23*np.sin(self.arm.Tilt[2]))/l34)
-        print(self.arm.Tilt[3])
-        #self.arm.Tilt[2] = np.pi/4
-        self.arm.Tilt[4] = self.arm.Tilt[2] - self.arm.Tilt[3] - np.pi/18
-        
-
-        """
-        # post catch
-        self.arm.Step = 1
-        self.arm.Tilt[3] = np.pi/18
-        self.arm.Tilt[2] = np.arccos((Y - l34*np.cos(self.arm.Tilt[3]))/l23)
-        self.arm.Tilt[2] = np.pi/4
-        self.arm.Tilt[4] = self.arm.Tilt[2] - self.arm.Tilt[3] - np.pi/18
-        """
-
-        """      
+    
+    def right 
         #left position
+        self.arm.Step = 2
         self.arm.Tilt[1] = np.pi/2
-        self.arm.Tilt[2] = -np.pi/2
-        self.arm.Tilt[3] = np.pi/3.5
+        self.arm.Tilt[2] = np.pi/2
+        self.arm.Tilt[3] = -np.pi/3.5
         self.arm.Tilt[4] = 0
-        """
+        self.arm.move_tilt()
+
+
+    def right2front(self):
+
+        self.arm.Step = 1
+        self.arm.Tilt[1] = np.pi/2
+        self.arm.Tilt[2] = np.pi/3
+        self.arm.Tilt[3] = -np.pi/3
+        self.arm.Tilt[4] = np.pi/2
+        
+        self.arm.move_tilt()
+        
+        self.arm.Tilt[1] = 0
+        self.arm.Tilt[2] = np.pi/3
+        self.arm.Tilt[3] = -np.pi/3
+        self.arm.Tilt[4] = np.pi/2
+        
+        self.arm.move_tilt()
+    
+    def grab(self):
+
+        self.arm.x = 0
+        self.arm.y = 0.05
+        self.arm.z = 0.25
+        self.arm.grip(95) # open gripper
+        self.arm.move_xyz()
+
+        self.arm.x = 0
+        self.arm.y = 0.00
+        self.arm.z = 0.35
+        self.arm.move_xyz()
+        self.arm.grip(45) # close gripper
+
+        self.arm.x = 0
+        self.arm.y = 0.05
+        self.arm.z = 0.25
+        self.arm.move_xyz()
+
+    def release(self):
+
+        self.arm.x = 0
+        self.arm.y = 0.05
+        self.arm.z = 0.25
+        self.arm.move_xyz()
+
+        self.arm.x = 0
+        self.arm.y = 0.10
+        self.arm.z = 0.35
+        self.arm.move_xyz()
+        self.arm.grip(95) # open gripper
+
+
+    def front2right(self)
+
+        self.arm.Step = 1
+        self.arm.Tilt[1] = np.pi/2
+        self.arm.Tilt[2] = np.pi/3
+        self.arm.Tilt[3] = -np.pi/3
+        self.arm.Tilt[4] = np.pi/2
+        self.arm.move_tilt()
+        
+        self.arm.Step = 1
+        self.arm.Tilt[1] = np.pi/2
+        self.arm.Tilt[2] = np.pi/3
+        self.arm.Tilt[3] = -np.pi/3
+        self.arm.Tilt[4] = np.pi/2
         self.arm.move_tilt()
 
     # def catch_01(self):
