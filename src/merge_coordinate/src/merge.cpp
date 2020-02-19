@@ -116,11 +116,17 @@ void obj_recognition::rgbImageCallback(const darknet_ros_msgs::BoundingBoxes::Co
     ymin = msg->bounding_boxes[index].ymin;
     xmax = msg->bounding_boxes[index].xmax;
     ymax = msg->bounding_boxes[index].ymax;
-
-    obj_pos_x = xmin + (xmax-xmin)/2;
-    obj_pos_y = ymin + (ymax-ymin)/2;
-    //ROS_INFO("xmin: %d , xmax: %d, ymin: %d, ymax: %d, x=%d, y=%d",xmin,xmax,ymin,ymax, obj_pos_x, obj_pos_y);
-    detected=true;
+    if (xmin<=10){
+        obj_pos_x = -1;
+        obj_pos_y = -1;
+        detected=false;
+    }
+    else{
+        obj_pos_x = xmin + (xmax-xmin)/2;
+        obj_pos_y = ymin + (ymax-ymin)/2;
+        //ROS_INFO("xmin: %d , xmax: %d, ymin: %d, ymax: %d, x=%d, y=%d",xmin,xmax,ymin,ymax, obj_pos_x, obj_pos_y);
+        detected=true;
+    }
    }
    else
    {

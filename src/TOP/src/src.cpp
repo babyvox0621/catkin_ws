@@ -163,7 +163,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
         //receive and check the results from yolo
         if(msg->ret == 0){ //found
           //set commond info
-          if(abs(msg->msg.x2d - 320) <= 100){ //close to center -> adjustment finished
+          if(abs(msg->msg.x2d - 400) <= 100){ //close to center -> adjustment finished
             status = 5; //trans to 把持 if object is タバコ
             //set commond info
             send.node = 3; //commond for arm
@@ -356,7 +356,7 @@ void obj_TOP::VoiceCallback(const TOP::commond::ConstPtr& msg){
   	    	topic_id++;
   	    	send.topic_id = topic_id;
   	    	send.msg.id = object;
-          system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
+          //system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
   	    	pub_commond.publish(send);
   	    }
   	    else{
