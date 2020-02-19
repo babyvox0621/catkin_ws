@@ -15,7 +15,7 @@ dt_now = datetime.datetime.now()
 #ツイートのみ
 message = "禁酒大失敗。。。"
 status= message + "----" + dt_now.strftime('%Y-%m-%d %H:%M:%S')#投稿するツイート
-t.statuses.update(status=status) #Twitterに投稿
+#t.statuses.update(status=status) #Twitterに投稿
 
 cwd = os.getcwd()
 

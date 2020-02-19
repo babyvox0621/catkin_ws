@@ -163,7 +163,7 @@ void obj_TOP::YoloCallback(const TOP::commond::ConstPtr& msg){
         //receive and check the results from yolo
         if(msg->ret == 0){ //found
           //set commond info
-          if(abs(msg->msg.x2d - 370) <= 70){ //close to center -> adjustment finished
+          if(abs(msg->msg.x2d - 360) <= 50){ //close to center -> adjustment finished
             status = 5; //trans to 把持 if object is タバコ
             //set commond info
             send.node = 3; //commond for arm
@@ -320,6 +320,7 @@ void obj_TOP::ArmCallback(const TOP::commond::ConstPtr& msg){
   	    break;
   	  case 6: //PR
   	    if(msg->ret == 0){
+          system("python /home/ubuntu/catkin_ws/video/tweet.py");
           system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/sns.wav 6");
           ROS_INFO("demo over...");
         }
@@ -356,7 +357,7 @@ void obj_TOP::VoiceCallback(const TOP::commond::ConstPtr& msg){
   	    	topic_id++;
   	    	send.topic_id = topic_id;
   	    	send.msg.id = object;
-          //system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
+          system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/people.wav 6");
   	    	pub_commond.publish(send);
   	    }
   	    else{
@@ -397,7 +398,7 @@ void obj_TOP::SendFirstMsg(){
   send.node = 1; //commond for yolo
   send.msg.id = object;
   send.topic_id = topic_id;
-  //system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 3");
+  system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/search.wav 3");
   pub_commond.publish(send);
   ROS_INFO("send done %d", topic_id);
 }
@@ -412,7 +413,7 @@ int main(int argc, char **argv){
   ROS_INFO("press g then press enter");
   getchar();
   ROS_INFO("OK");
-  //system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/start.wav 3");
+  system("python /home/ubuntu/catkin_ws/video/voice_play.py /home/ubuntu/catkin_ws/video/start.wav 4");
   obj_TOP.SendFirstMsg();  
 	ros::spin();
 	return 0;
