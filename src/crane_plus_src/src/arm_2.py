@@ -11,12 +11,12 @@ class Arm:
         self.sub_arm = rospy.Subscriber('Commond_TOP', commond, self.callback)
         self.pub_arm = rospy.Publisher('results_ARM', commond, queue_size=1)
         
-        self.girpper_open = 95 # 95mm
-        self.girpper_close = 45 # 45mm
+        self.gripper_open = 95 # 95mm
+        self.gripper_close = 45 # 45mm
 
         # move to start position
         self.pose_upper()
-        self.arm.gripper(gripper_close)
+        self.arm.gripper(self.gripper_close)
         self.pose_right_2()
         self.pose_right_1()
 
@@ -68,13 +68,15 @@ class Arm:
             rospy.loginfo("%d", msg.topic_id)
 
             if (msg.msg.id == 0): # grab can
+
                 self.pose_right_2()
                 self.pose_upper()
-                self.gripper(self.girpper_open)
+                self.gripper(self.gripper_open)
                 self.pose_front()
                 self.pose_grip()
                 self.arm.grip(self.gripper_close)
                 self.pose_front()
+                self.pose_upper()
                 self.pose_right_2()
                 self.pose_right_1()
 
@@ -82,6 +84,7 @@ class Arm:
                 rospy.loginfo("grab can")
 
             elif (msg.msg.id == 1): # release can
+
                 self.pose_right_2()
                 self.pose_upper()
                 self.pose_front()
